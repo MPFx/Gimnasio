@@ -1,0 +1,592 @@
+========================================
+ARCHIVO: Miembro.java
+========================================
+
+------------ NIVEL 🟢 FÁCIL (SINTAXIS) ------------
+
+[Error 1] Falta punto y coma
+public class Miembro {
+    private String idMiembro
+    private String nombreCompleto; // ❌ Falta ;
+}
+
+[Error 2] Paréntesis en método
+public int CalcularEdad( {
+    if (fechaNacimiento == null) return 0;
+    return Period.between(fechaNacimiento.toLocalDate(), LocalDateTime.now().toLocalDate()).getYears();
+} // ❌ Paréntesis mal cerrado
+
+[Error 3] Tipo incorrecto en comparación
+if (fechaNacimiento == "null") { // ❌ Comparando con String en vez de null
+
+[Error 4] Llave de cierre extra
+public class Miembro {
+    // ... código
+}
+} // ❌ Llave de más
+
+------------ NIVEL 🟡 MEDIO (LÓGICA) ------------
+
+[Error 5] No valida que el documento de identidad tenga formato correcto
+public Miembro(String idMiembro, String nombreCompleto, String documentoIdentidad) {
+    this.documentoIdentidad = documentoIdentidad;
+    // ❌ No valida que sea un número de documento válido
+}
+
+[Error 6] No valida que el email tenga formato correcto
+public void setEmailContacto(String email) {
+    this.emailContacto = email; // ❌ Podría ser "correo-invalido"
+}
+
+[Error 7] No valida que la fecha de nacimiento no sea futura
+public void setFechaNacimiento(LocalDateTime fecha) {
+    this.fechaNacimiento = fecha; // ❌ Podría ser una fecha futura
+}
+
+[Error 8] No valida que el teléfono tenga formato correcto
+public void setTelefonoContacto(String telefono) {
+    this.telefonoContacto = telefono; // ❌ Podría ser "abc"
+}
+
+------------ NIVEL 🟠 DIFÍCIL (POO) ------------
+
+[Error 9] El método asignarMembresia no valida si ya tiene una activa
+public void asignarMembresia(Membresia membresia) {
+    this.membresiaActiva = membresia;
+    historialMembresias.add(membresia);
+    // ❌ No verifica si ya tiene membresía activa (debería desactivarla primero)
+}
+
+[Error 10] El método CalcularEdad usa LocalDateTime.now() cada vez
+public int CalcularEdad() {
+    return Period.between(fechaNacimiento.toLocalDate(), LocalDateTime.now().toLocalDate()).getYears();
+    // ❌ Debería usar una fecha fija para cálculos consistentes
+}
+
+[Error 11] No hay método para renovar membresía automáticamente
+// ❌ Debería tener: public void renovarMembresia()
+
+[Error 12] El historial de membresías es una lista, pero no hay método para obtener la última
+public List<Membresia> getHistorialMembresias() { return historialMembresias; }
+// ❌ No hay forma de obtener la membresía anterior o la más reciente
+
+------------ NIVEL 🔴 COMPLEJO (DISEÑO) ------------
+
+[Error 13] Estado de salud como String
+private String estadoSalud;
+// ❌ Debería ser estructurado: alergias, lesiones, condiciones preexistentes
+
+[Error 14] Objetivo principal como String
+private String objetivoPrincipal;
+// ❌ Debería ser Enum: enum Objetivo { PERDER_PESO, GANAR_MUSCULO, TONIFICAR, etc. }
+
+[Error 15] No hay validación de edad mínima para ser miembro
+// ❌ Un niño de 5 años podría registrarse sin restricciones
+
+[Error 16] No hay historial de visitas
+// ❌ No guarda cuándo ha ido al gimnasio, frecuencia, etc.
+
+[Error 17] No hay método para verificar si el miembro puede ingresar
+// ❌ Debería tener: public boolean puedeIngresar() (membresía activa, sin deudas, etc.)
+
+[Error 18] No hay relación con las clases que toma
+// ❌ Debería tener: private List<Clase> clasesTomadas;
+
+[Error 19] No hay control de acceso por huella o tarjeta
+// ❌ Debería tener: private String codigoAcceso; o private String huellaDigital
+
+[Error 20] No hay validación de que el documento sea único en el sistema
+// ❌ Podrían existir dos miembros con mismo documento
+------------------------------------------------------------------
+========================================
+ARCHIVO: Membresia.java
+========================================
+
+------------ NIVEL 🟢 FÁCIL (SINTAXIS) ------------
+
+[Error 1] Falta punto y coma
+public abstract class Membresia {
+    protected String idMembresia
+    protected LocalDateTime fechaInicio; // ❌ Falta ;
+}
+
+[Error 2] Paréntesis en método
+public int CalcularDiasRestantes( {
+    LocalDateTime ahora = LocalDateTime.now();
+    return (int) ChronoUnit.DAYS.between(ahora, fechaFin);
+} // ❌ Paréntesis mal cerrado
+
+[Error 3] Tipo incorrecto en condición
+if (ahora.isAfter("fechaFin")) { // ❌ Comparando LocalDateTime con String
+
+[Error 4] Llave de cierre extra
+public abstract class Membresia {
+    // ... código
+}
+} // ❌ Llave de más
+
+------------ NIVEL 🟡 MEDIO (LÓGICA) ------------
+
+[Error 5] No valida que la fecha de inicio no sea futura
+public Membresia(String idMembresia, LocalDateTime fechaInicio, int diasVigencia) {
+    this.fechaInicio = fechaInicio;
+    // ❌ No valida que fechaInicio <= LocalDateTime.now()
+}
+
+[Error 6] No valida que los días de vigencia sean positivos
+public Membresia(String idMembresia, LocalDateTime fechaInicio, int diasVigencia) {
+    this.fechaFin = fechaInicio.plusDays(diasVigencia);
+    // ❌ Si diasVigencia es negativo, fechaFin es anterior a fechaInicio
+}
+
+[Error 7] El método ValidarAcceso() no considera si la membresía está pausada
+public boolean ValidarAcceso() {
+    // ❌ No considera si el miembro tiene la membresía suspendida temporalmente
+}
+
+[Error 8] No valida que el precio pagado sea positivo
+public void setPrecioPagado(BigDecimal precio) {
+    this.precioPagado = precio; // ❌ Podría ser negativo
+}
+
+------------ NIVEL 🟠 DIFÍCIL (POO) ------------
+
+[Error 9] El método getDiasRestantes() llama a CalcularDiasRestantes() cada vez
+public int getDiasRestantes() { return CalcularDiasRestantes(); }
+// ❌ Debería actualizar diasRestantes en un método separado, no en el getter
+
+[Error 10] No hay método para verificar si la membresía está vencida
+// ❌ Debería tener: public boolean estaVencida() { return LocalDateTime.now().isAfter(fechaFin); }
+
+[Error 11] El método RegistrarAcceso() no valida que haya pasado suficiente tiempo
+public void RegistrarAcceso() {
+    if (ValidarAcceso()) {
+        this.accesosRealizados++; // ❌ Podría registrar 10 accesos en un minuto
+    }
+}
+
+[Error 12] No hay relación con el miembro que posee la membresía
+// ❌ Debería tener: protected Miembro miembro;
+
+------------ NIVEL 🔴 COMPLEJO (DISEÑO) ------------
+
+[Error 13] Los accesos incluidos se manejan con un contador simple
+protected int accesosIncluidos;
+protected int accesosRealizados;
+// ❌ No permite diferentes tipos de acceso (solo gimnasio, clases, etc.)
+
+[Error 14] No hay período de gracia después del vencimiento
+// ❌ Debería permitir unos días de gracia antes de bloquear
+
+[Error 15] No hay posibilidad de pausar la membresía (por lesión, viaje)
+// ❌ Debería tener: private boolean pausada; y fechas de pausa
+
+[Error 16] El método de pago es un String
+protected String metodoPago;
+// ❌ Debería ser Enum: enum MetodoPago { EFECTIVO, TARJETA, TRANSFERENCIA }
+
+[Error 17] No hay cálculo de prorrateo si se cancela antes
+// ❌ Si el miembro cancela, debería devolver proporción del precio
+
+[Error 18] No hay diferenciación entre días calendario y días hábiles
+// ❌ Una membresía de 30 días debería contar solo días que el gimnasio abre
+
+[Error 19] No hay límite de accesos por día
+// ❌ Podría registrar 20 accesos en un día con membresía "ilimitada"
+
+[Error 20] No hay registro de la hora del acceso
+// ❌ Solo cuenta cantidad, no sabe a qué hora accedió
+
+---------------------------------------------------------------------------------
+========================================
+ARCHIVO: MembresiaMensual.java
+========================================
+
+------------ NIVEL 🟢 FÁCIL (SINTAXIS) ------------
+
+[Error 1] Herencia mal escrita
+public class MembresiaMensual extends Membresia { // ❌ Correcto
+    private int diasVigencia
+    private boolean renovacionAutomatica; // ❌ Falta ;
+}
+
+[Error 2] Paréntesis en constructor
+public MembresiaMensual(String idMembresia, LocalDateTime fechaInicio {
+    super(idMembresia, fechaInicio, 30);
+} // ❌ Falta ) en parámetros
+
+[Error 3] Tipo incorrecto en acceso
+this.accesosIncluidos = "999"; // ❌ Debería ser 999 (int)
+
+[Error 4] Llave de cierre extra
+public class MembresiaMensual extends Membresia {
+    // ... código
+}
+} // ❌ Llave de más
+
+------------ NIVEL 🟡 MEDIO (LÓGICA) ------------
+
+[Error 5] No valida que el costo de renovación sea positivo
+public void setCostoRenovacion(BigDecimal costo) {
+    this.costoRenovacion = costo; // ❌ Podría ser negativo
+}
+
+[Error 6] El método renovar() no valida si la membresía está activa
+public void renovar() {
+    if (renovacionAutomatica) {
+        this.fechaFin = this.fechaFin.plusDays(diasVigencia);
+        // ❌ No valida que la membresía no esté vencida o cancelada
+    }
+}
+
+[Error 7] No valida que los días de vigencia sean 30 (siempre son 30)
+public void setDiasVigencia(int dias) {
+    this.diasVigencia = dias; // ❌ Podría cambiarse a 15 días (ya no sería mensual)
+}
+
+[Error 8] No hay límite de renovaciones automáticas
+public void renovar() {
+    if (renovacionAutomatica) {
+        this.fechaFin = this.fechaFin.plusDays(diasVigencia);
+        // ❌ Podría renovar infinitamente sin tope
+    }
+}
+
+------------ NIVEL 🟠 DIFÍCIL (POO) ------------
+
+[Error 9] No usa super.ValidarAcceso() antes de permitir acceso
+@Override
+public String getTipoMembresia() {
+    return "MENSUAL";
+}
+// ❌ No sobreescribe métodos de validación específicos
+
+[Error 10] El método renovar() debería llamar a un servicio externo para cobro
+public void renovar() {
+    if (renovacionAutomatica) {
+        this.fechaFin = this.fechaFin.plusDays(diasVigencia);
+        // ❌ No realiza el cobro automático
+    }
+}
+
+[Error 11] No hay relación con el método de pago para renovación
+// ❌ Debería usar el metodoPago de la superclase para renovar
+
+[Error 12] El costo de renovación debería ser el mismo que el precio pagado por defecto
+private BigDecimal costoRenovacion;
+// ❌ Podría ser diferente al precioPagado inicial
+
+------------ NIVEL 🔴 COMPLEJO (DISEÑO) ------------
+
+[Error 13] Los accesos "ilimitados" con 999 no son realmente ilimitados
+this.accesosIncluidos = 999;
+// ❌ Si alguien va 1000 veces, se queda sin accesos
+
+[Error 14] No hay diferenciación entre días hábiles y fines de semana
+// ❌ Una membresía mensual debería tener restricciones en fines de semana
+
+[Error 15] No hay período de cortesía antes de renovar
+// ❌ Podría renovar el mismo día del vencimiento, sin aviso
+
+[Error 16] No valida que la renovación automática tenga un tope de veces
+// ❌ Podría renovar por 10 años sin consentimiento
+
+[Error 17] No hay notificación al miembro antes de renovar
+// ❌ Debería enviar email o notificación antes de la renovación
+
+[Error 18] El método renovar() debería extender desde la fecha actual, no desde la fechaFin
+this.fechaFin = this.fechaFin.plusDays(diasVigencia);
+// ❌ Si la membresía ya venció, debería renovar desde hoy, no desde fechaFin
+
+[Error 19] No hay validación de que el miembro pueda pagar la renovación
+// ❌ Podría tener saldo insuficiente en su método de pago
+
+[Error 20] No hay registro histórico de renovaciones
+// ❌ Debería tener: private List<LocalDateTime> fechasRenovacion
+-------------------------------------------------------------------------
+========================================
+ARCHIVO: MembresiaTrimestral.java
+========================================
+
+------------ NIVEL 🟢 FÁCIL (SINTAXIS) ------------
+
+[Error 1] Herencia mal escrita
+public class MembresiaTrimestral extends Membresia { // ❌ Correcto
+    private int diasVigencia
+    private boolean renovacionAutomatica; // ❌ Falta ;
+}
+
+[Error 2] Paréntesis en constructor
+public MembresiaTrimestral(String idMembresia, LocalDateTime fechaInicio {
+    super(idMembresia, fechaInicio, 90);
+} // ❌ Falta ) en parámetros
+
+[Error 3] Tipo incorrecto en acceso
+this.accesosIncluidos = "999"; // ❌ Debería ser 999 (int)
+
+[Error 4] Llave de cierre extra
+public class MembresiaTrimestral extends Membresia {
+    // ... código
+}
+} // ❌ Llave de más
+
+------------ NIVEL 🟡 MEDIO (LÓGICA) ------------
+
+[Error 5] No valida que el costo de renovación sea positivo
+public void setCostoRenovacion(BigDecimal costo) {
+    this.costoRenovacion = costo; // ❌ Podría ser negativo
+}
+
+[Error 6] El método renovar() no valida si la membresía está activa
+public void renovar() {
+    if (renovacionAutomatica) {
+        this.fechaFin = this.fechaFin.plusDays(diasVigencia);
+        // ❌ No valida que la membresía no esté vencida o cancelada
+    }
+}
+
+[Error 7] No valida que los días de vigencia sean 90 (siempre son 90)
+public void setDiasVigencia(int dias) {
+    this.diasVigencia = dias; // ❌ Podría cambiarse a 45 días (ya no sería trimestral)
+}
+
+[Error 8] No hay límite de renovaciones automáticas
+public void renovar() {
+    if (renovacionAutomatica) {
+        this.fechaFin = this.fechaFin.plusDays(diasVigencia);
+        // ❌ Podría renovar infinitamente sin tope
+    }
+}
+
+------------ NIVEL 🟠 DIFÍCIL (POO) ------------
+
+[Error 9] Código duplicado con MembresiaMensual
+// ❌ Este archivo es casi idéntico a MembresiaMensual.java
+// Debería haber una clase abstracta intermedia MembresiaRenovable
+
+[Error 10] El método renovar() debería llamar a un servicio externo para cobro
+public void renovar() {
+    if (renovacionAutomatica) {
+        this.fechaFin = this.fechaFin.plusDays(diasVigencia);
+        // ❌ No realiza el cobro automático
+    }
+}
+
+[Error 11] No hay relación con el método de pago para renovación
+// ❌ Debería usar el metodoPago de la superclase para renovar
+
+[Error 12] No valida que haya pasado al menos un período antes de renovar
+public void renovar() {
+    // ❌ Podría renovar el mismo día de la compra inicial
+}
+
+------------ NIVEL 🔴 COMPLEJO (DISEÑO) ------------
+
+[Error 13] Los accesos "ilimitados" con 999 no son realmente ilimitados
+this.accesosIncluidos = 999;
+// ❌ Si alguien va 1000 veces, se queda sin accesos
+
+[Error 14] No hay beneficio por pago trimestral (descuento)
+// ❌ Pagar 3 meses debería ser más barato que 3 mensualidades
+
+[Error 15] No hay diferenciación entre meses con diferente número de días
+// ❌ 90 días no siempre son 3 meses exactos (febrero, etc.)
+
+[Error 16] No valida que la renovación automática tenga un tope de veces
+// ❌ Podría renovar por 10 años sin consentimiento
+
+[Error 17] No hay notificación al miembro antes de renovar
+// ❌ Debería enviar email o notificación antes de la renovación
+
+[Error 18] El método renovar() debería extender desde la fecha actual, no desde la fechaFin
+this.fechaFin = this.fechaFin.plusDays(diasVigencia);
+// ❌ Si la membresía ya venció, debería renovar desde hoy, no desde fechaFin
+
+[Error 19] No hay ventaja sobre la membresía mensual
+// ❌ Además de la duración, debería tener algún beneficio extra
+
+[Error 20] No hay registro histórico de renovaciones
+// ❌ Debería tener: private List<LocalDateTime> fechasRenovacion
+------------------------------------------------------------------------------
+========================================
+ARCHIVO: MembresiaAnual.java
+========================================
+
+------------ NIVEL 🟢 FÁCIL (SINTAXIS) ------------
+
+[Error 1] Herencia mal escrita
+public class MembresiaAnual extends Membresia { // ❌ Correcto
+    private int diasVigencia
+    private boolean renovacionAutomatica; // ❌ Falta ;
+}
+
+[Error 2] Paréntesis en constructor
+public MembresiaAnual(String idMembresia, LocalDateTime fechaInicio {
+    super(idMembresia, fechaInicio, 365);
+} // ❌ Falta ) en parámetros
+
+[Error 3] Tipo incorrecto en acceso
+this.accesosIncluidos = "999"; // ❌ Debería ser 999 (int)
+
+[Error 4] Llave de cierre extra
+public class MembresiaAnual extends Membresia {
+    // ... código
+}
+} // ❌ Llave de más
+
+------------ NIVEL 🟡 MEDIO (LÓGICA) ------------
+
+[Error 5] No considera años bisiestos
+super(idMembresia, fechaInicio, 365);
+// ❌ Un año puede tener 366 días en año bisiesto
+
+[Error 6] No valida que el costo de renovación tenga descuento por ser anual
+// ❌ Una membresía anual debería ser más económica que 12 mensualidades
+
+[Error 7] No valida que los días de vigencia sean 365 (siempre son 365)
+public void setDiasVigencia(int dias) {
+    this.diasVigencia = dias; // ❌ Podría cambiarse a 300 días (ya no sería anual)
+}
+
+[Error 8] No hay límite de renovaciones automáticas
+public void renovar() {
+    if (renovacionAutomatica) {
+        this.fechaFin = this.fechaFin.plusDays(diasVigencia);
+        // ❌ Podría renovar infinitamente sin tope
+    }
+}
+
+------------ NIVEL 🟠 DIFÍCIL (POO) ------------
+
+[Error 9] Código duplicado con MembresiaMensual y Trimestral
+// ❌ Este archivo es casi idéntico a los anteriores
+// Debería haber una clase abstracta intermedia MembresiaRenovable
+
+[Error 10] No valida que el miembro tenga buen historial para renovar
+public void renovar() {
+    // ❌ Podría renovar aunque haya tenido mal comportamiento
+}
+
+[Error 11] No hay beneficio adicional por compromiso anual
+// ❌ Debería incluir servicios extra (instructor personal, etc.)
+
+[Error 12] El método renovar() debería considerar incremento anual de precio
+// ❌ El costo de renovación podría aumentar cada año
+
+------------ NIVEL 🔴 COMPLEJO (DISEÑO) ------------
+
+[Error 13] Los accesos "ilimitados" con 999 no son realmente ilimitados
+this.accesosIncluidos = 999;
+// ❌ Un miembro anual podría ir 1000 veces si va 3 veces al día
+
+[Error 14] No hay período de cortesía para renovar
+// ❌ Debería dar 30 días de gracia antes de perder beneficios
+
+[Error 15] No hay diferenciación por temporada alta/baja
+// ❌ El precio debería variar según época del año
+
+[Error 16] No valida que la renovación automática tenga un tope de años
+// ❌ Podría renovar por 20 años sin consentimiento
+
+[Error 17] No hay notificación al miembro antes de renovar
+// ❌ Debería enviar email con 30 días de anticipación
+
+[Error 18] No hay beneficio por fidelidad (descuento por renovar cada año)
+// ❌ Clientes antiguos deberían tener mejores precios
+
+[Error 19] No valida que el miembro haya usado la membresía para renovar
+// ❌ Podría renovar aunque nunca haya ido al gimnasio
+
+[Error 20] No hay posibilidad de congelar la membresía por viaje/lesión
+// ❌ Una membresía anual debería permitir pausas
+-------------------------------------------------------------------------
+========================================
+ARCHIVO: MembresiaVitalicia.java
+========================================
+
+------------ NIVEL 🟢 FÁCIL (SINTAXIS) ------------
+
+[Error 1] Herencia mal escrita
+public class MembresiaVitalicia extends Membresia { // ❌ Correcto
+    private String beneficioVitalicio
+    // ❌ Falta ;
+}
+
+[Error 2] Paréntesis en constructor
+public MembresiaVitalicia(String idMembresia, LocalDateTime fechaInicio {
+    super(idMembresia, fechaInicio, 36500);
+} // ❌ Falta ) en parámetros
+
+[Error 3] Tipo incorrecto en acceso
+this.accesosIncluidos = "999999"; // ❌ Debería ser 999999 (int)
+
+[Error 4] Llave de cierre extra
+public class MembresiaVitalicia extends Membresia {
+    // ... código
+}
+} // ❌ Llave de más
+
+------------ NIVEL 🟡 MEDIO (LÓGICA) ------------
+
+[Error 5] Asume que la persona vive 100 años
+super(idMembresia, fechaInicio, 36500); // 100 años aprox
+// ❌ Podría vivir más de 100 años, la membresía vencería
+
+[Error 6] No valida que el miembro sea mayor de edad para membresía vitalicia
+// ❌ Un niño de 10 años podría comprar una vitalicia
+
+[Error 7] El método ValidarAcceso() siempre retorna true, incluso si el miembro falleció
+@Override
+public boolean ValidarAcceso() {
+    return true; // ❌ No considera si el miembro ya no existe
+}
+
+[Error 8] No valida que el beneficio vitalicio sea transferible (herencia)
+// ❌ No especifica si pasa a familiares al fallecer
+
+------------ NIVEL 🟠 DIFÍCIL (POO) ------------
+
+[Error 9] No usa super.ValidarAcceso() para validaciones base
+@Override
+public boolean ValidarAcceso() {
+    return true; // ❌ Ignora completamente la lógica de la superclase
+}
+
+[Error 10] El beneficio "invitados" no está limitado
+this.beneficioVitalicio = "Acceso ilimitado de por vida + invitados";
+// ❌ Podría traer 50 invitados todos los días sin control
+
+[Error 11] No hay método para transferir la membresía
+// ❌ Una membresía vitalicia debería poder transferirse
+
+[Error 12] No hay consideración por mantenimiento de la membresía
+// ❌ Podría requerir una cuota de mantenimiento anual
+
+------------ NIVEL 🔴 COMPLEJO (DISEÑO) ------------
+
+[Error 13] 36500 días no es exactamente 100 años (ignora bisiestos)
+super(idMembresia, fechaInicio, 36500);
+// ❌ 100 años incluyen unos 25 días bisiestos extra
+
+[Error 14] Beneficio vitalicio como String fijo
+private String beneficioVitalicio;
+// ❌ Debería ser List<String> beneficios o beneficios configurables
+
+[Error 15] No hay límite de edad máxima para comprar vitalicia
+// ❌ Una persona de 95 años podría comprarla y usarla poco tiempo
+
+[Error 16] No hay política de reembolso si el miembro fallece pronto
+// ❌ Si muere al mes, la familia pierde el dinero
+
+[Error 17] Los accesos "ilimitados" con 999999 no son realmente ilimitados
+this.accesosIncluidos = 999999;
+// ❌ Si va 3 veces al día por 100 años = 109,500 accesos, aún sobra, pero no es "infinito"
+
+[Error 18] No hay diferenciación entre el titular y los invitados
+// ❌ Invitados deberían tener restricciones (solo fin de semana, etc.)
+
+[Error 19] No valida que el precio pagado sea acorde al beneficio
+// ❌ Podría venderse muy barata o muy cara sin relación con el valor real
+
+[Error 20] No hay registro de invitados utilizados
+// ❌ No controla cuántos invitados ha traído, quiénes son, etc.

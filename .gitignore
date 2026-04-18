@@ -1,0 +1,20 @@
+
+# Archivos compilados
+dist/
+build/
+*.class
+
+# Configuración de NetBeans
+nbproject/
+
+# Archivos temporales
+*.tmp
+*.log
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de respaldo
+*.bak
+*.backup
